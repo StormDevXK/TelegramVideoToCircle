@@ -1,5 +1,6 @@
-/.idea/
-/config.py
+/.idea
 /__pycache__/
+/config.py
 /vid.mp4
 /video.mp4
+/log.txt
