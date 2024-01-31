@@ -1,2 +1,5 @@
-/.idea
+/.idea/
 /config.py
+/__pycache__/
+/vid.mp4
+/video.mp4
