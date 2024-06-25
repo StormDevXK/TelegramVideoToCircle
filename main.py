@@ -42,10 +42,10 @@ async def video_circle(message: types.Message):
         await cut_video(f'{video_title}.mp4', f'{video_title}ex.mp4')
         vid = open(f'{video_title}ex.mp4', 'rb')
         await bot.send_video_note(message.chat.id, vid)
-        vide.close()  # ERROR: файл не удаляется. неопределенный процесс не дает его удалить
+        vide.close()
         vid.close()
         os.remove(f'{video_title}ex.mp4')
-        os.remove(f'{video_title}.mp4')
+        os.remove(f'{video_title}.mp4')  # ERROR: файл не удаляется (проблема наблюдается на ОС Windows, Linux Ubuntu работает корректно)
     except exceptions.FileIsTooBig:
         await bot.send_message(message.chat.id, 'Размер файла слишком большой')
 
