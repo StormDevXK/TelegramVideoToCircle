@@ -1,11 +1,11 @@
 from aiogram import Bot, Dispatcher, executor, types, exceptions
-import config
 from video_edit import cut_video
-from loger import log_bot
+from modules.settings import *
+from modules.loger import log_bot
 import time
 import os
 
-bot = Bot(token=config.TOKEN)
+bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
 
 

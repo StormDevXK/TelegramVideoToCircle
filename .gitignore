@@ -5,3 +5,5 @@
 /video.mp4
 /log.txt
 /consoleOutput.txt
+venv
+.env
