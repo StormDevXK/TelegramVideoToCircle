@@ -1,7 +1,7 @@
 import moviepy
 import moviepy.editor as mpe
 import moviepy.video.fx.all as vfx
-import ffmpeg
+# import ffmpeg
 
 
 def add_image(clip, img_name: str):

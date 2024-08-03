@@ -1,15 +1,17 @@
-from aiogram import Bot, Dispatcher, executor, types, exceptions
+from aiogram import Bot, Dispatcher, types, exceptions, F
+from aiogram.filters import Command
 from video_edit import cut_video
 from modules.settings import *
 from modules.loger import log_bot
+import asyncio
 import time
 import os
 
 bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(bot)
+dp = Dispatcher()
 
 
-@dp.message_handler(commands=['start'])
+@dp.message(Command('start'))
 async def send_welcome(message: types.Message):
     log_bot(message.chat.id, message.from_user.username, 'send_welcome', message.text)
     await bot.send_message(message.chat.id, "Привет!\nЯ бот, с помощью которого ты сможешь преобразовать видео в "
@@ -17,7 +19,7 @@ async def send_welcome(message: types.Message):
     await bot.send_message(message.chat.id, 'Для получения дополнительной информации воспользуйтесь командой /help')
 
 
-@dp.message_handler(commands=['help'])
+@dp.message(Command('help'))
 async def helps(message: types.Message):
     log_bot(message.chat.id, message.from_user.username, 'help', message.text)
     await bot.send_message(message.chat.id, "Рекомендации для входного видео:\n• Длительность видео должна быть менее "
@@ -30,7 +32,7 @@ async def helps(message: types.Message):
                                             "секунду.")
 
 
-@dp.message_handler(content_types=['video'])
+@dp.message(F.video)
 async def video_circle(message: types.Message):
     log_bot(message.chat.id, message.from_user.username, 'video_circle', message.text)
     file_id = message.video.file_id
@@ -46,11 +48,12 @@ async def video_circle(message: types.Message):
         vid.close()
         os.remove(f'{video_title}ex.mp4')
         os.remove(f'{video_title}.mp4')  # ERROR: файл не удаляется (проблема наблюдается на ОС Windows, Linux Ubuntu работает корректно)
-    except exceptions.FileIsTooBig:
+    except Exception as ex:
+        print(ex)
         await bot.send_message(message.chat.id, 'Размер файла слишком большой')
 
 
-@dp.message_handler()
+@dp.message()
 async def echo(message: types.Message):
     print(f'{message.from_user.id}_{int(time.time()*100)}')
     log_bot(message.chat.id, message.from_user.username, 'echo', message.text)
@@ -59,5 +62,8 @@ async def echo(message: types.Message):
     await message.answer(message.text)
 
 
+async def main():
+    await dp.start_polling(bot)
+
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())

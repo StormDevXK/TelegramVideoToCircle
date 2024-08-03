@@ -6,4 +6,3 @@ if exists(".env"):
 
 
 BOT_TOKEN = getenv('BOT_TOKEN')
-

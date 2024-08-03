@@ -7,3 +7,5 @@
 /consoleOutput.txt
 venv
 .env
+modules/__pycache__/
+video_storage/
