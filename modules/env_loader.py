@@ -6,5 +6,4 @@ if exists(".env"):
 
 
 BOT_TOKEN = getenv('BOT_TOKEN')
-BOT_USERNAME = getenv('BOT_USERNAME')
-TARGET_CHAT_ID = getenv('TARGET_CHAT_ID')
+
