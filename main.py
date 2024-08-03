@@ -63,6 +63,7 @@ async def echo(message: types.Message):
 
 
 async def main():
+    print("Бот запущен")
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
