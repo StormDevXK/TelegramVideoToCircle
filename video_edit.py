@@ -1,42 +1,34 @@
-import moviepy
-import moviepy.editor as mpe
-import moviepy.video.fx.all as vfx
-# import ffmpeg
+import ffmpeg
 
+async def cut_video(input_file, output_file):
+    print(input_file)
+    # Прочитать видеофайл и получить его размеры
+    probe = ffmpeg.probe(input_file)
+    video_info = next(stream for stream in probe['streams'] if stream['codec_type'] == 'video')
+    width = int(video_info['width'])
+    height = int(video_info['height'])
 
-def add_image(clip, img_name: str):
-    img = (mpe.ImageClip(f'imgs/{img_name}.png')
-           .set_duration(clip.duration)
-           # .resize(height=50)  # если необходимо поменять размер...
-           # .margin(right=8, top=8, opacity=0)  # (опционально) logo-border padding
-           .set_pos(('center', 'center')))
-    final = mpe.CompositeVideoClip([clip, img])
-    return final
-
-
-async def cut_video(en: str, ex: str, img: str = None):
-    cclip = mpe.VideoFileClip(en)
-    clip = cclip.set_fps(30)
-    cs = clip.size
-    print(cs, (cs[0] - 576) // 2, (cs[1] - 576) // 2)
-    if cs[0] < cs[1]:
-        res = vfx.resize(clip, width=576)
-        res = vfx.crop(res, y1=(res.size[1] - 576) // 2, height=576)
+    # Рассчитать новые размеры с учетом уменьшения меньшей стороны до 576 пикселей
+    if width < height:
+        new_width = 576
+        new_height = int(height * (576 / width))
     else:
-        res = vfx.resize(clip, height=576)
-        res = vfx.crop(res, x1=(res.size[0] - 576) // 2, width=576)
-    if img is not None:
-        res = add_image(res, img)
-    res.write_videofile(ex)
+        new_height = 576
+        new_width = int(width * (576 / height))
 
+    # Обрезать большую сторону до 576 пикселей, центруя видео
+    crop_x = (new_width - 576) // 2 if new_width > 576 else 0
+    crop_y = (new_height - 576) // 2 if new_height > 576 else 0
 
-# stream = ffmpeg.input('video.mp4')
-# stream = ffmpeg.filter(stream, 'fps', fps=10, round='up')
-# stream = ffmpeg.output(stream, 'out.mp4')
-# ffmpeg.run(stream)
-# abs = ffmpeg.probe('out.mp4')
+    # Создать команду ffmpeg
+    input_stream = ffmpeg.input(input_file)
+    video = (
+        input_stream
+        .filter('scale', new_width, new_height)
+        .filter('crop', w=576, h=576, x=crop_x, y=crop_y)
+        .filter('fps', fps=30)
+    )
+    audio = input_stream.audio
 
-# stream = ffmpeg.input('input.mp4')
-# stream = ffmpeg.hflip(stream)
-# stream = ffmpeg.output(stream, 'output.mp4')
-# ffmpeg.run(stream)
+    # Объединить видео и аудио, и сохранить в выходной файл
+    ffmpeg.output(video, audio, output_file).run()

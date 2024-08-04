@@ -1,5 +1,6 @@
 from aiogram import Bot, Dispatcher, types, exceptions, F
 from aiogram.filters import Command
+from aiogram.types import FSInputFile
 from video_edit import cut_video
 from modules.settings import *
 from modules.loger import log_bot
@@ -37,20 +38,19 @@ async def video_circle(message: types.Message):
     log_bot(message.chat.id, message.from_user.username, 'video_circle', message.text)
     file_id = message.video.file_id
     try:
-        file = await bot.get_file(file_id)
         await message.reply('Идет обработка видео...')
         video_title = f'video_storage/{message.from_user.id}_{int(time.time()*100)}'
-        vide = await bot.download_file(file.file_path, f'{video_title}.mp4')
+        # vide = await bot.download(message.video, destination=f'{video_title}.mp4')
+        with open(f'{video_title}.mp4', 'wb') as f:
+            await bot.download(message.video, destination=f)
         await cut_video(f'{video_title}.mp4', f'{video_title}ex.mp4')
-        vid = open(f'{video_title}ex.mp4', 'rb')
-        await bot.send_video_note(message.chat.id, vid)
-        vide.close()
-        vid.close()
+        await message.answer_video_note(FSInputFile(f'{video_title}ex.mp4'))
+
         os.remove(f'{video_title}ex.mp4')
-        os.remove(f'{video_title}.mp4')  # ERROR: файл не удаляется (проблема наблюдается на ОС Windows, Linux Ubuntu работает корректно)
+        os.remove(f'{video_title}.mp4')
     except Exception as ex:
         print(ex)
-        await bot.send_message(message.chat.id, 'Размер файла слишком большой')
+        await bot.send_message(message.chat.id, 'Error, please try again later')
 
 
 @dp.message()
