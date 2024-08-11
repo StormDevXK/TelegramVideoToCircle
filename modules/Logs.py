@@ -21,7 +21,7 @@ class Logs:
         self.__create_table()
 
     def create_log(self, message: str, type: str = "INFO"):
-        self.cur.execute(f"INSERT INTO {self.name} (time, type, message) VALUES(?, ?, ?)", (datetime.now().strftime('%Y.%m.%d  %H:%M:%S'), type, message))
+        self.cur.execute(f"INSERT INTO {self.name} (time, type, message) VALUES(?, ?, ?)", (datetime.now().strftime('%d.%m.%Y  %H:%M:%S'), type, message))
         self.con.commit()
 
     def get_logs(self):
