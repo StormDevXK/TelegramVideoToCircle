@@ -9,3 +9,5 @@ venv
 .env
 modules/__pycache__/
 video_storage/
+base.db
+modules/base.db
