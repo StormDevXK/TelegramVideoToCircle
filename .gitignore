@@ -12,3 +12,4 @@ video_storage/
 base.db
 modules/db/base.db
 modules/db/__pycache__/
+modules/logs.db
