@@ -1,5 +1,6 @@
 import ffmpeg
 
+
 async def cut_video(input_file, output_file):
     print(input_file)
     # Прочитать видеофайл и получить его размеры
