@@ -1,4 +1,5 @@
 import sqlite3
+from modules.db.Exceptions import NoSuchUser
 
 
 class Users:
@@ -39,11 +40,22 @@ class Users:
                 a.append(result[0])
             return a
 
-    def free_minus(self, id: str, new_free_trial: int):
-        self.cur.execute(f"UPDATE {self.name} SET free_trial = {new_free_trial} WHERE id = {id}")
-        self.con.commit()
+    def free_update(self, id: str, new_free_trial: int):
+        if self.is_user_in_db(id):
+            self.cur.execute(f"UPDATE {self.name} SET free_trial = {new_free_trial} WHERE id = {id}")
+            self.con.commit()
+            return 0
+        raise NoSuchUser
+
+    def paid_update(self, id: str, new_paid_attempts: int):
+        if self.is_user_in_db(id):
+            self.cur.execute(f"UPDATE {self.name} SET paid_attempts = {new_paid_attempts} WHERE id = {id}")
+            self.con.commit()
+            return 0
+        raise NoSuchUser
 
 
 if __name__ == '__main__':
     bd = Users()
     bd.create_user("1234", 1, 0)
+    bd.free_update("1234", 12)
