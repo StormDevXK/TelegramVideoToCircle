@@ -39,6 +39,10 @@ class Users:
                 a.append(result[0])
             return a
 
+    def free_minus(self, id: str, new_free_trial: int):
+        self.cur.execute(f"UPDATE {self.name} SET free_trial = {new_free_trial} WHERE id = {id}")
+        self.con.commit()
+
 
 if __name__ == '__main__':
     bd = Users()
