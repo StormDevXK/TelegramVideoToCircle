@@ -1,4 +1,6 @@
 import time
+from modules.db.Logs import Logs
+logger = Logs()
 
 
 def log_bot(chat_id: int, username: str, func: str, message: str = None):
@@ -7,3 +9,5 @@ def log_bot(chat_id: int, username: str, func: str, message: str = None):
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
     with open('log.txt', 'a', encoding='utf-8') as f:
         f.write(f'{formatted_time} | id{chat_id} @{username} | {func} | {message}\n')
+        logger.create_log(username, f"{func} {message}")
+
