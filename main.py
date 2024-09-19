@@ -53,6 +53,22 @@ async def video_circle(message: types.Message):
         await bot.send_message(message.chat.id, 'Error, please try again later')
 
 
+@dp.message(F.audio)
+async def video_circle(message: types.Message):
+    log_bot(message.chat.id, message.from_user.username, 'audio_voice', message.text)
+    file_id = message.audio.file_id
+    try:
+        await message.reply('Идет обработка аудио...')
+        video_title = f'audio_storage/{message.from_user.id}_{int(time.time()*100)}'
+        with open(f'{video_title}.mp3', 'wb') as f:
+            await bot.download(message.audio, destination=f)
+        await message.answer_voice(FSInputFile(f'{video_title}.mp3'))
+        os.remove(f'{video_title}.mp3')
+    except Exception as ex:
+        print(ex)
+        await bot.send_message(message.chat.id, 'Error, please try again later')
+
+
 @dp.message()
 async def echo(message: types.Message):
     print(f'{message.from_user.id}_{int(time.time()*100)}')
